@@ -1,0 +1,9 @@
+body {
+    background-color: #081826;
+    color:#e8e7e1;
+    font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+    font-weight: 800; /* Bold */
+}
