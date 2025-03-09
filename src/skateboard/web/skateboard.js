@@ -1,27 +1,43 @@
 
 
 document.addEventListener("DOMContentLoaded", function () {
-    
+
 });
 
-eel.expose(addHeader);
-function addHeader(header_text, node_id, options) {
-    const template = document.getElementById("headerTemplate");
-    const newHeader = template.content.cloneNode(true);
+eel.expose(updateHeader);
+function updateHeader(header_text, node_id, options) {
+    const {node: node, is_template: is_template} = findTemplateOrCreate("headerTemplate", node_id);
 
-    newHeader.querySelector("h2").textContent = header_text;
-    newHeader.querySelector("div").id = node_id;
+    node.querySelector("h2").textContent = header_text;
 
-    document.getElementById("mainContainer").appendChild(newHeader);
+    if(is_template)
+        document.getElementById("mainContainer").appendChild(node);
 }
 
-eel.expose(addParagraph);
-function addParagraph(paragraph_text, node_id, options) {
-    const template = document.getElementById("paragraphTemplate");
-    const newParagraph = template.content.cloneNode(true);
+eel.expose(updateParagraph);
+function updateParagraph(paragraph_text, node_id, options) {
+    const {node: node, is_template: is_template} = findTemplateOrCreate("paragraphTemplate", node_id);
 
-    newParagraph.querySelector("p").textContent = paragraph_text;
-    newParagraph.querySelector("div").id = node_id;
+    node.querySelector("p").textContent = paragraph_text;
 
-    document.getElementById("mainContainer").appendChild(newParagraph);
+    if(is_template)
+        document.getElementById("mainContainer").appendChild(node);
+}
+
+function findTemplateOrCreate(template_id, node_id){
+    
+    // Check if element exists
+    if(node_id != "null" && document.getElementById(node_id) ){
+        console.log("updating existing element");
+        // Return existing element
+        const existingNode = document.getElementById(node_id)
+        return {node: existingNode, is_template: false};
+    } else {
+        console.log("adding new element");
+        // otherwise, make new element
+        const template = document.getElementById(template_id);
+        const newNode = template.content.cloneNode(true);
+        newNode.querySelector('div').id = node_id;
+        return {node: newNode, is_template: true}
+    }
 }
