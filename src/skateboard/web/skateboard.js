@@ -24,10 +24,18 @@ function updateParagraph(paragraph_text, node_id, options) {
         document.getElementById("mainContainer").appendChild(node);
 }
 
+eel.expose(updateDivider);
+function updateDivider(node_id, options) {
+    const {node: node, is_template: is_template} = findTemplateOrCreate("dividerTemplate", node_id);
+
+    if(is_template)
+        document.getElementById("mainContainer").appendChild(node);
+}
+
 function findTemplateOrCreate(template_id, node_id){
     
     // Check if element exists
-    if(node_id != "null" && document.getElementById(node_id) ){
+    if(node_id != "" && document.getElementById(node_id) ){
         console.log("updating existing element");
         // Return existing element
         const existingNode = document.getElementById(node_id)
@@ -37,7 +45,8 @@ function findTemplateOrCreate(template_id, node_id){
         // otherwise, make new element
         const template = document.getElementById(template_id);
         const newNode = template.content.cloneNode(true);
-        newNode.querySelector('div').id = node_id;
+        if(node_id != "")
+            newNode.querySelector('div').id = node_id;
         return {node: newNode, is_template: true}
     }
 }

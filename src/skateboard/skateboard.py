@@ -8,11 +8,18 @@ class Skateboard():
         # Start eel
         eel.init(WEB_DIR, allowed_extensions=['.js', '.html', '.css'])
 
-    def add_header(self, text, node_id = None, options = {}):
+    def header(self, text, node_id = "", options = {}):
         eel.updateHeader(text, node_id, options)
 
-    def add_paragraph(self, text, node_id = None, options = {}):
+    def paragraph(self, text, node_id = "", options = {}):
         eel.updateParagraph(text, node_id, options)
 
-    def start(self):
-        eel.start("index.html", size=(800, 800))
+    def divider(self, node_id = "", options = {}):
+        eel.updateDivider(node_id, options)
+
+    def start(self, block = True):
+        eel.start("index.html", size=(800, 800), block = block)
+
+
+    def close(self):
+        pass

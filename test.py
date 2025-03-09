@@ -1,10 +1,19 @@
 from src.skateboard import Skateboard
+import eel
+import time
 
 board = Skateboard()
 
-board.add_header("Hello!", "main_header")
-board.add_paragraph("lol", "test_paragraph")
+board.header("Hello!")
+board.paragraph("lol", "test_paragraph")
+board.divider()
+board.paragraph("More text!")
 
-board.add_paragraph("1234", "test_paragraph")
+board.start(block = False)
 
-board.start()
+for i in range(1000):
+    board.paragraph(i, "test_paragraph")
+    print(i)
+    eel.sleep(0.05)
+
+board.close()
