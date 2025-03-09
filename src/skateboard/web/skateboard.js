@@ -38,9 +38,15 @@ eel.expose(updateValueChart);
 function updateValueChart(chart_data, node_id, options){
     const {node: node, is_template: is_template} = findTemplateOrCreate("valueChartTemplate", node_id);
 
+
+    min_x = chart_data[0][0];
+    max_x = chart_data[chart_data.length - 1][0]
+
     var chart_options = {
         xAxis: {
-            type: "value"
+            type: "value",
+            min: min_x,
+            max: max_x
         },
         yAxis: {
             type: "value"
@@ -49,9 +55,31 @@ function updateValueChart(chart_data, node_id, options){
             {
                 data: chart_data,
                 type: "line",
-                showSymbol: option_or(options, "showSymbol", false)
+                showSymbol: option_or(options, "showSymbol", false),
+                itemStyle: {
+
+                }
             }
         ]
+    }
+
+    if(options.gaugeValue){
+        latestValue = chart_data[chart_data.length - 1][1];
+        chart_options.graphic = [
+            {
+                type: 'text',
+                left: 'center',
+                top: "center",
+                style: {
+                    text: `${latestValue.toFixed(2)} ${option_or(options, "yUnit", "")}`, // Display last value
+                    font: 'bold 48px Arial',
+                    fill: option_or(options, "color", "#ffffff"), // Dark color for visibility
+                    textAlign: 'center'
+                },
+                silent: true,
+                zlevel: 1,
+            }
+        ];
     }
 
     if(options.tooltip){
@@ -77,6 +105,21 @@ function updateValueChart(chart_data, node_id, options){
 
     if(options.filled == true){
         chart_options.series[0].areaStyle ={};
+    }
+
+    if(options.zoom){
+        chart_options.dataZoom = [
+            {
+              type: 'inside',
+            },
+            {
+
+            }
+          ]
+    }
+
+    if(options.color){
+        chart_options.series[0].itemStyle.color = options.color;
     }
 
     var chart;
