@@ -1,14 +1,16 @@
 
 
 document.addEventListener("DOMContentLoaded", function () {
-
+    console.log("loaded");
 });
 
 charts = {}
 
 eel.expose(updateHeader);
-function updateHeader(header_text, node_id, options) {
+function updateHeader(header_text, node_id, columns, options) {
     const {node: node, is_template: is_template} = findTemplateOrCreate("headerTemplate", node_id);
+    if(is_template)
+        node.querySelector("div").style.flex = `1 1 calc((100% / ${columns}) - (20px))`;
 
     node.querySelector("h2").textContent = header_text;
 
@@ -17,8 +19,10 @@ function updateHeader(header_text, node_id, options) {
 }
 
 eel.expose(updateParagraph);
-function updateParagraph(paragraph_text, node_id, options) {
+function updateParagraph(paragraph_text, node_id, columns, options) {
     const {node: node, is_template: is_template} = findTemplateOrCreate("paragraphTemplate", node_id);
+    if(is_template)
+        node.querySelector("div").style.flex = `1 1 calc((100% / ${columns}) - (20px))`;
 
     node.querySelector("p").textContent = paragraph_text;
 
@@ -27,43 +31,74 @@ function updateParagraph(paragraph_text, node_id, options) {
 }
 
 eel.expose(updateDivider);
-function updateDivider(node_id, options) {
+function updateDivider(node_id, columns, options) {
     const {node: node, is_template: is_template} = findTemplateOrCreate("dividerTemplate", node_id);
+    if(is_template)
+        node.querySelector("div").style.flex = `1 1 calc((100% / ${columns}) - (20px))`;
 
     if(is_template)
         document.getElementById("mainContainer").appendChild(node);
 }
 
 eel.expose(updateValueChart);
-function updateValueChart(chart_data, node_id, options){
+function updateValueChart(chart_data, node_id, columns, options){
     const {node: node, is_template: is_template} = findTemplateOrCreate("valueChartTemplate", node_id);
-
-
-    min_x = chart_data[0][0];
-    max_x = chart_data[chart_data.length - 1][0]
+    if(is_template){
+        console.log(columns);
+        node.querySelector("div").style.flex = `1 1 calc((100% / ${columns}) - (20px))`;
+    }
 
     var chart_options = {
+        title: {
+            text: options.title
+        },
+        grid:{
+            left: 50,
+            right: 30,
+            top: 20,
+            bottom: 30
+        },
         xAxis: {
             type: "value",
-            min: min_x,
-            max: max_x
         },
         yAxis: {
-            type: "value"
+            type: "value",
         },
         series: [
             {
-                data: chart_data,
                 type: "line",
                 showSymbol: option_or(options, "showSymbol", false),
                 itemStyle: {
 
                 }
             }
-        ]
+        ],
+        animation: false
+    }
+    
+    if(chart_data.length > 0){
+        chart_options.series[0].data = chart_data
     }
 
-    if(options.gaugeValue){
+    if(chart_data.length > 2){
+        chart_options.xAxis.min = chart_data[0][0];
+        chart_options.xAxis.max = chart_data[chart_data.length - 1][0]
+    }
+
+    if(options.hideAxes){
+        // TODO: Adjust grid
+        chart_options.xAxis.show = false;
+        chart_options.yAxis.show = false;
+
+        chart_options.grid = {
+            left: 5,
+            right: 5,
+            top: 5,
+            bottom: 5
+        }
+    }
+
+    if(options.gaugeValue && chart_data.length > 0){
         latestValue = chart_data[chart_data.length - 1][1];
         chart_options.graphic = [
             {
@@ -73,7 +108,7 @@ function updateValueChart(chart_data, node_id, options){
                 style: {
                     text: `${latestValue.toFixed(2)} ${option_or(options, "yUnit", "")}`, // Display last value
                     font: 'bold 48px Arial',
-                    fill: option_or(options, "color", "#ffffff"), // Dark color for visibility
+                    fill: "#ffffff", // option_or(options, "color", "#ffffff"),
                     textAlign: 'center'
                 },
                 silent: true,
@@ -142,12 +177,12 @@ function findTemplateOrCreate(template_id, node_id){
     
     // Check if element exists
     if(node_id != "" && document.getElementById(node_id) ){
-        console.log("updating existing element");
+        // console.log("updating existing element");
         // Return existing element
         const existingNode = document.getElementById(node_id)
         return {node: existingNode, is_template: false};
     } else {
-        console.log("adding new element");
+        // console.log("adding new element");
         // otherwise, make new element
         const template = document.getElementById(template_id);
         const newNode = template.content.cloneNode(true);
