@@ -24,8 +24,6 @@ class Skateboard():
             options["title"] = title
             self.chart_options[node_id] = options
 
-        print(columns)
-
         eel.updateValueChart(chart_data, node_id, columns, self.chart_options[node_id])
 
     def start(self, block = True, allow_external = False):
