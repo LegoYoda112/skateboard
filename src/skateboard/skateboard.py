@@ -1,30 +1,35 @@
 import eel
 from importlib.resources import files
+import uuid
 
 WEB_DIR = files('skateboard').joinpath('web')
 
 class Skateboard():
     def __init__(self):
-        self.chart_options = {}
+        self.objects = []
 
         # Start eel
         eel.init(WEB_DIR, allowed_extensions=['.js', '.html', '.css'])
 
-    def header(self, text, columns = 1, node_id = "", options = {}):
-        eel.updateHeader(text, node_id, columns, options)
+    def add_object(self, skateboard_object):
+        self.objects.append(skateboard_object)
+        skateboard_object.update()
 
-    def paragraph(self, text, node_id = "", columns = 1, options = {}):
-        eel.updateParagraph(text, node_id, columns, options)
+    # def header(self, text, columns = 1, node_id = "", options = {}):
+    #     eel.updateHeader(text, node_id, columns, options)
 
-    def divider(self, node_id = "", columns = 1, options = {}):
-        eel.updateDivider(node_id, columns, options)
+    # def paragraph(self, text, node_id = "", columns = 1, options = {}):
+    #     eel.updateParagraph(text, node_id, columns, options)
 
-    def value_chart(self, chart_data, title = "", node_id = "", columns = 1, options = None):
-        if(options):
-            options["title"] = title
-            self.chart_options[node_id] = options
+    # def divider(self, node_id = "", columns = 1, options = {}):
+    #     eel.updateDivider(node_id, columns, options)
 
-        eel.updateValueChart(chart_data, node_id, columns, self.chart_options[node_id])
+    # def value_chart(self, chart_data, title = "", node_id = "", columns = 1, options = None):
+    #     if(options):
+    #         options["title"] = title
+    #         self.chart_options[node_id] = options
+
+    #     eel.updateValueChart(chart_data, node_id, columns, self.chart_options[node_id])
 
     def start(self, block = True, allow_external = False):
 
